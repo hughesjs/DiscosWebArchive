@@ -1,0 +1,45 @@
+name: Download the Latest Data from DISCOSweb
+on:
+  schedule:
+    - cron: "0 0 * * 5"
+  workflow_dispatch:
+
+jobs:
+  extract:
+    name: Fetch latest data from DISCOSweb
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.0.x'
+      - name: Checkout DiscosExtractor
+        uses: actions/checkout@master
+        with:
+          repository: hughesjs/DiscosExtractor
+          path: ./DiscosExtractor
+      - name: Checkout analysis repo
+        uses: actions/checkout@master
+        with:
+          repository: hughesjs/DiscosWebAnalysis
+          path: ./DiscosWebAnalysis
+      - name: Build DiscosExtractor
+        run: dotnet build -c Release DiscosExtractor/src/DiscosExtractor/DiscosExtractor.csproj
+      - name: Create extractor config file
+        run:  echo "{\"DiscosApiUrl\":\"https://discosweb.esoc.esa.int/api/\",\"DiscosApiKey\":\"${{secrets.DISCOS_TOKEN}}\"}" >> .discosextractorrc
+      - name: Fetch Latest Data from DISCOSweb
+        run: ./DiscosExtractor/src/DiscosExtractor/bin/Release/net6.0/discosextractor fetch 
+      - run: ls -lah
+      - name: Create folder for date
+        run: mkdir ./DiscosWebAnalysis/data/raw/$(date +%Y%m%d)
+      - name: Copy file to raw directory
+        run: mv ./discos-*.json ./DiscosWebAnalysis/data/raw/$(date +%Y%m%d)
+      - name: Test
+        run: ls -la ./DiscosWebAnalysis/data/raw/
+      - uses: EndBug/add-and-commit@v9
+        with:
+          add: '.'
+          author_name: DiscosExtractorBot
+          author_email: discosextractorbot@proton.me
+          commit: --signoff
+          cwd: './DiscosWebAnalysis'
+          message: 'Added DISCOS extraction data for $(date +%Y%m%d)'
