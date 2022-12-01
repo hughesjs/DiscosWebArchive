@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: '7.0.x'
       - name: Checkout DiscosExtractor
         uses: actions/checkout@master
         with:
@@ -27,7 +27,7 @@ jobs:
       - name: Create extractor config file
         run:  echo "{\"DiscosApiUrl\":\"https://discosweb.esoc.esa.int/api/\",\"DiscosApiKey\":\"${{secrets.DISCOS_TOKEN}}\"}" >> .discosextractorrc
       - name: Fetch Latest Data from DISCOSweb
-        run: ./DiscosExtractor/src/DiscosExtractor/bin/Release/net6.0/discosextractor fetch 
+        run: ./DiscosExtractor/src/DiscosExtractor/bin/Release/net7.0/discosextractor fetch 
       - run: ls -lah
       - name: Create folder for date
         run: mkdir ./DiscosWebAnalysis/data/raw/$(date +%Y%m%d)
