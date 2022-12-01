@@ -28,13 +28,10 @@ jobs:
         run:  echo "{\"DiscosApiUrl\":\"https://discosweb.esoc.esa.int/api/\",\"DiscosApiKey\":\"${{secrets.DISCOS_TOKEN}}\"}" >> .discosextractorrc
       - name: Fetch Latest Data from DISCOSweb
         run: ./DiscosExtractor/src/DiscosExtractor/bin/Release/net7.0/discosextractor fetch 
-      - run: ls -lah
       - name: Create folder for date
         run: mkdir $(date +%Y%m%d)
       - name: Copy file to raw directory
         run: mv ./discos-*.json $(date +%Y%m%d)
-      - name: Test
-        run: ls -la ./DiscosWebAnalysis/data/raw/
       - uses: EndBug/add-and-commit@v9
         with:
           add: '.'
