@@ -30,9 +30,9 @@ jobs:
         run: ./DiscosExtractor/src/DiscosExtractor/bin/Release/net7.0/discosextractor fetch 
       - run: ls -lah
       - name: Create folder for date
-        run: mkdir ./DiscosWebAnalysis/data/raw/$(date +%Y%m%d)
+        run: mkdir $(date +%Y%m%d)
       - name: Copy file to raw directory
-        run: mv ./discos-*.json ./DiscosWebAnalysis/data/raw/$(date +%Y%m%d)
+        run: mv ./discos-*.json $(date +%Y%m%d)
       - name: Test
         run: ls -la ./DiscosWebAnalysis/data/raw/
       - uses: EndBug/add-and-commit@v9
@@ -42,4 +42,4 @@ jobs:
           author_email: discosextractorbot@proton.me
           commit: --signoff
           cwd: './DiscosWebAnalysis'
-          message: 'Added DISCOS extraction data for $(date +%Y%m%d)'
+          message: Added DISCOS extraction data for $(date +%Y%m%d)
